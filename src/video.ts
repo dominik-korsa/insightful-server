@@ -2,6 +2,7 @@ import { fal, Result } from "@fal-ai/client";
 import ffmpeg from 'fluent-ffmpeg';
 import { Readable, Writable } from 'stream';
 import { WhisperOutput } from '@fal-ai/client/endpoints';
+import got from "got";
 
 export async function mp4toMp3(input: string | Readable): Promise<Blob> {
   const chunks: Buffer[] = [];
@@ -44,4 +45,8 @@ export function transcribe(mp3Blob: Blob): Promise<Result<WhisperOutput>> {
       }
     },
   });
+}
+
+export function downloadMp4(videoUrl: string): Readable {
+  return got.stream.get(videoUrl, { responseType: 'buffer' });
 }

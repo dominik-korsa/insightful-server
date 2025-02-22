@@ -1,3 +1,5 @@
 .env
 node_modules
 input.mp4
+.idea
+dist

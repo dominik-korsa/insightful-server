@@ -25,3 +25,4 @@ export const Slide = z.object({
 export const Movie = z.object({
   slides: z.array(Slide),
 });
+export type Movie = z.infer<typeof Movie>

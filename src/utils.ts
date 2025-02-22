@@ -5,7 +5,12 @@ export function requireEnv(name: string) {
   return process.env[name];
 }
 
-const regex = /^https:\/\/(www\.)?instagram\.com\/share\/reel\/([a-zA-Z0-9-_]+)$/;
+const instagramRegex = /^https:\/\/(www\.)?instagram\.com\/share\/reel\/([a-zA-Z0-9-_]+)$/;
 export function checkInstagramUrl(url: string) {
-  return regex.test(url);
+  return instagramRegex.test(url);
+}
+
+const tikTokRegex = /^https:\/\/(www\.)?tiktok\.com\/.+$/;
+export function checkTikTokUrl(url: string) {
+  return tikTokRegex.test(url);
 }
