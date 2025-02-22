@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import {z} from 'zod';
 
 export const SlideAssessment = z.enum([
   'opinion',
@@ -17,19 +17,19 @@ export const Link = z.object({
 
 export const SlideAnalysis = z.object({
   text_part: z.string(),
-  category: SlideAssessment,
-  explanation: z.string().max(40),
+  assessment: SlideAssessment,
+  explanation: z.string(),
   word_indexes: z.tuple([z.number(), z.number()]),
-  links: Link,
+  links: z.array(Link),
   suggestions: z.array(z.string()),
 });
 export type SlideAnalysis = z.infer<typeof SlideAnalysis>;
 
 export const Slide = z.object({
-  timestampBeginMs: z.number().positive(),
-  durationMs: z.number().positive(),
-  comment: z.optional(z.string()),
+  timestampBeginS: z.number().nonnegative(),
+  durationS: z.number().positive(),
   assessment: SlideAssessment,
+  explanation: z.string(),
   links: z.array(Link),
   suggestions: z.array(z.string()),
 });
