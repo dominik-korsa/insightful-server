@@ -1,4 +1,5 @@
 import 'dotenv/config';
+import { downloadMp4, mp4toMp3, transcribe, processWhisperResult } from "../video.js";
 
 import fs from 'fs';
 import path from 'path';
@@ -6,7 +7,8 @@ import { WhisperOutput } from '@fal-ai/client/endpoints';
 
 async function main() {
   const transcript = JSON.parse(await fs.promises.readFile(path.join(import.meta.dirname, '../../local/transcript.json'), 'utf-8')) as WhisperOutput;
-  console.log(transcript);
+
+  await processWhisperResult(transcript)
 }
 
 main().catch((error) => {
