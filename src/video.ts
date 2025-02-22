@@ -47,6 +47,6 @@ export function transcribe(mp3Blob: Blob): Promise<Result<WhisperOutput>> {
   });
 }
 
-export function downloadMp4(videoUrl: string): Readable {
-  return got.stream.get(videoUrl, { responseType: 'buffer' });
+export async function downloadMp4(videoUrl: string): Promise<Buffer> {
+  return await got.get(videoUrl).buffer();
 }
