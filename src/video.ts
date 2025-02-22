@@ -62,6 +62,10 @@ async function createPrompt(input_text: string): Promise<string> {
   return `${promptTemplate}\n"${input_text}"\nOutput JSON:`;
 }
 
+const TranscriptAnalysisResponse = z.object({
+  segments: z.array(SlideAnalysis),
+});
+
 async function analyzeSlide(prompt: string): Promise<SlideAnalysis[]> {
   const result = await fal.subscribe("fal-ai/any-llm", {
     input: {
@@ -76,7 +80,7 @@ async function analyzeSlide(prompt: string): Promise<SlideAnalysis[]> {
     }
   });
 
-  return z.array(SlideAnalysis).parse(JSON.parse(result.data.output).segments);
+  return TranscriptAnalysisResponse.parse(JSON.parse(result.data.output)).segments;
 }
 
 export async function processWhisperResult(whisperResult: WhisperOutput): Promise<Movie> {
@@ -100,6 +104,7 @@ export async function processWhisperResult(whisperResult: WhisperOutput): Promis
     explanation: item.explanation,
     links: item.links,
     suggestions: item.suggestions,
+    transcript: item.text_part,
   }));
 
   return { slides: slides };

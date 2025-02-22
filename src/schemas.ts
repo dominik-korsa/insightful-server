@@ -32,6 +32,7 @@ export const Slide = z.object({
   explanation: z.string(),
   links: z.array(Link),
   suggestions: z.array(z.string()),
+  transcript: z.string(),
 });
 export type Slide = z.infer<typeof Slide>;
 
