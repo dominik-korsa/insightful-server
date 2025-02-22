@@ -23,11 +23,11 @@ Output Format:
 Return a JSON object with the following fields for each segment:
 {
   "text_part": "Extracted segment of text",
-  "category": "One of the defined categories",
+  "assessment": "One of the defined categories",
   "explanation": "Brief explanation of the categorization (max 40 words)",
   "word_indexes": [start_index, end_index],
   "links": [
-    { "title": "Title of source", "link": "URL" }
+    { "url": "URL", "title": "Title of source",  }
   ],
   "suggestions": [
     "Possible follow-up question",
@@ -44,17 +44,17 @@ Output JSON:
   "segments": [
     {
       "text_part": "Vaccines cause autism, and pharmaceutical companies are hiding the truth.",
-      "category": "false-information",
+      "assessment": "false-information",
       "explanation": "There is no scientific evidence linking vaccines to autism. Large-scale studies have confirmed no causal link.",
       "word_indexes": [0, 13],
       "links": [
         {
-          "title": "CDC: Vaccines and Autism",
-          "link": "https://www.cdc.gov/vaccinesafety/concerns/autism.html"
+          "url": "https://www.cdc.gov/vaccinesafety/concerns/autism.html",
+          "title": "CDC: Vaccines and Autism"
         },
         {
-          "title": "WHO: Vaccine Safety Overview",
-          "link": "https://www.who.int/news-room/fact-sheets/detail/vaccine-safety"
+          "url": "https://www.who.int/news-room/fact-sheets/detail/vaccine-safety",
+          "title": "WHO: Vaccine Safety Overview"
         }
       ],
       "suggestions": [
@@ -64,7 +64,7 @@ Output JSON:
     },
     {
       "text_part": "Scientists claim vaccines are safe, but independent studies have shown harmful effects.",
-      "category": "unverified-fact",
+      "assessment": "unverified-fact",
       "explanation": "The phrase 'independent studies' lacks specific references to peer-reviewed research.",
       "word_indexes": [14, 26],
       "links": [],
@@ -75,13 +75,13 @@ Output JSON:
     },
     {
       "text_part": "Many governments mandate vaccines despite public concerns.",
-      "category": "verified-fact",
+      "assessment": "verified-fact",
       "explanation": "Many countries enforce vaccine mandates as part of public health policies.",
       "word_indexes": [27, 32],
       "links": [
         {
-          "title": "CDC: State Vaccine Requirements",
-          "link": "https://www.cdc.gov/vaccines/imz-managers/laws/state-reqs.html"
+          "url": "https://www.cdc.gov/vaccines/imz-managers/laws/state-reqs.html",
+          "title": "CDC: State Vaccine Requirements"
         }
       ],
       "suggestions": [
@@ -91,7 +91,7 @@ Output JSON:
     },
     {
       "text_part": "However, personal freedom is important, and people should have the right to choose.",
-      "category": "opinion",
+      "assessment": "opinion",
       "explanation": "This expresses a personal belief about individual rights.",
       "word_indexes": [33, 41],
       "links": [],
@@ -102,13 +102,13 @@ Output JSON:
     },
     {
       "text_part": "The CDC states that vaccines have been proven safe through extensive studies.",
-      "category": "verified-fact",
+      "assessment": "verified-fact",
       "explanation": "Numerous studies confirm vaccine safety based on decades of research.",
       "word_indexes": [42, 50],
       "links": [
         {
-          "title": "CDC: Vaccine Safety Studies",
-          "link": "https://www.cdc.gov/vaccinesafety/index.html"
+          "url": "https://www.cdc.gov/vaccinesafety/index.html",
+          "title": "CDC: Vaccine Safety Studies"
         }
       ],
       "suggestions": [
@@ -118,7 +118,7 @@ Output JSON:
     },
     {
       "text_part": "But isn’t it strange how some children develop issues after vaccination?",
-      "category": "unverified-fact",
+      "assessment": "unverified-fact",
       "explanation": "This suggests a connection without evidence. While adverse reactions exist, there is no proven link to long-term health issues.",
       "word_indexes": [51, 59],
       "links": [],
@@ -129,7 +129,7 @@ Output JSON:
     },
     {
       "text_part": "Clearly, there’s something they aren’t telling us.",
-      "category": "unclassified",
+      "assessment": "unclassified",
       "explanation": "This is a vague statement without a specific factual claim.",
       "word_indexes": [60, 64],
       "links": [],
