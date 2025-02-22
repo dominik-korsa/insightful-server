@@ -1,0 +1,145 @@
+You are an expert in analyzing text and categorizing it. You are given a passage extracted from a video, and your task is to extract meaningful segments from the text.
+
+Each segment should be a clear, coherent part of the text, which can be a sentence, phrase, or clause, or even multiple sentences if they form a single logical unit.
+
+For each segment:
+1. Provide the starting and ending word indexes within the text.
+2. Categorize it into one of the following categories:
+ opinion: A subjective statement or personal viewpoint.
+ verified-fact: A statement backed by reliable sources or established facts.
+ unverified-fact: A factual claim that lacks supporting evidence or sources.
+ false-information: A statement that is false, with evidence proving so.
+ unclassified: A part that does not belong in any of the above categories (e.g., vague statements, extraneous text).
+3. Provide a clear explanation for each categorization:
+ For Verified Facts, include at least one supporting source (e.g., scientific studies, reputable news outlets, official reports).
+ For Unverified Facts, state that the claim lacks verification and explain why.
+ For Opinions, explain that it expresses a personal belief. If relevant, provide links to context or expert perspectives.
+ For False Information, provide at least one source proving it is false.
+ For Unclassified, explain briefly why it does not fit into any category.
+4. Include relevant links to supporting sources for Verified Facts and False Information.
+5. Provide suggestions: List potential follow-up questions or related topics that the user might want to explore.
+
+Output Format:
+Return a JSON object with the following fields for each segment:
+{
+  "text_part": "Extracted segment of text",
+  "category": "One of the defined categories",
+  "explanation": "Brief explanation of the categorization (max 40 words)",
+  "word_indexes": [start_index, end_index],
+  "links": [
+    { "title": "Title of source", "link": "URL" }
+  ],
+  "suggestions": [
+    "Possible follow-up question",
+    "Related topic to explore"
+  ]
+}
+Do not format the JSON. Start your prompt with "{" and end with "}".
+
+Input Text:
+"Vaccines cause autism, and pharmaceutical companies are hiding the truth. Scientists claim vaccines are safe, but independent studies have shown harmful effects. Many governments mandate vaccines despite public concerns. However, personal freedom is important, and people should have the right to choose. The CDC states that vaccines have been proven safe through extensive studies. But isn’t it strange how some children develop issues after vaccination? Clearly, there’s something they aren’t telling us."
+
+Output JSON:
+{
+  "segments": [
+    {
+      "text_part": "Vaccines cause autism, and pharmaceutical companies are hiding the truth.",
+      "category": "false-information",
+      "explanation": "There is no scientific evidence linking vaccines to autism. Large-scale studies have confirmed no causal link.",
+      "word_indexes": [0, 13],
+      "links": [
+        {
+          "title": "CDC: Vaccines and Autism",
+          "link": "https://www.cdc.gov/vaccinesafety/concerns/autism.html"
+        },
+        {
+          "title": "WHO: Vaccine Safety Overview",
+          "link": "https://www.who.int/news-room/fact-sheets/detail/vaccine-safety"
+        }
+      ],
+      "suggestions": [
+        "What are common vaccine side effects?",
+        "How do vaccines work at a biological level?"
+      ]
+    },
+    {
+      "text_part": "Scientists claim vaccines are safe, but independent studies have shown harmful effects.",
+      "category": "unverified-fact",
+      "explanation": "The phrase 'independent studies' lacks specific references to peer-reviewed research.",
+      "word_indexes": [14, 26],
+      "links": [],
+      "suggestions": [
+        "Are there any legitimate studies showing vaccine harm?",
+        "How are vaccines tested for safety?"
+      ]
+    },
+    {
+      "text_part": "Many governments mandate vaccines despite public concerns.",
+      "category": "verified-fact",
+      "explanation": "Many countries enforce vaccine mandates as part of public health policies.",
+      "word_indexes": [27, 32],
+      "links": [
+        {
+          "title": "CDC: State Vaccine Requirements",
+          "link": "https://www.cdc.gov/vaccines/imz-managers/laws/state-reqs.html"
+        }
+      ],
+      "suggestions": [
+        "Should governments have the power to mandate vaccines?",
+        "What are the ethical concerns surrounding vaccine mandates?"
+      ]
+    },
+    {
+      "text_part": "However, personal freedom is important, and people should have the right to choose.",
+      "category": "opinion",
+      "explanation": "This expresses a personal belief about individual rights.",
+      "word_indexes": [33, 41],
+      "links": [],
+      "suggestions": [
+        "What are arguments for and against vaccine mandates?",
+        "How do different countries approach vaccine regulations?"
+      ]
+    },
+    {
+      "text_part": "The CDC states that vaccines have been proven safe through extensive studies.",
+      "category": "verified-fact",
+      "explanation": "Numerous studies confirm vaccine safety based on decades of research.",
+      "word_indexes": [42, 50],
+      "links": [
+        {
+          "title": "CDC: Vaccine Safety Studies",
+          "link": "https://www.cdc.gov/vaccinesafety/index.html"
+        }
+      ],
+      "suggestions": [
+        "What studies support vaccine safety?",
+        "What are the most common vaccine myths?"
+      ]
+    },
+    {
+      "text_part": "But isn’t it strange how some children develop issues after vaccination?",
+      "category": "unverified-fact",
+      "explanation": "This suggests a connection without evidence. While adverse reactions exist, there is no proven link to long-term health issues.",
+      "word_indexes": [51, 59],
+      "links": [],
+      "suggestions": [
+        "What are the risks of vaccines?",
+        "What is the difference between correlation and causation?"
+      ]
+    },
+    {
+      "text_part": "Clearly, there’s something they aren’t telling us.",
+      "category": "unclassified",
+      "explanation": "This is a vague statement without a specific factual claim.",
+      "word_indexes": [60, 64],
+      "links": [],
+      "suggestions": [
+        "How do conspiracy theories spread?",
+        "What makes a claim verifiable?"
+      ]
+    }
+  ]
+}
+
+
+Input Text:
