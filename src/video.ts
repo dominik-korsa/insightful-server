@@ -16,7 +16,6 @@ export async function mp4toMp3(input: string | Readable): Promise<Blob> {
 
   await new Promise<void>((resolve, reject) => {
     ffmpeg(input)
-      .setDuration(10)
       .noVideo()
       .audioCodec('libmp3lame') // Use MP3 codec
       .on('end', () => { resolve(); })

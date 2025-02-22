@@ -1,16 +1,17 @@
-import path from 'path';
 import Fastify from "fastify";
-import { checkInstagramUrl, checkTikTokUrl, requireEnv } from "./utils.js";
+import { checkTikTokUrl, requireEnv } from "./utils.js";
 import { z } from "zod";
 import { serializerCompiler, validatorCompiler, ZodTypeProvider } from "fastify-type-provider-zod";
 import { downloadMp4, mp4toMp3, transcribe } from "./video.js";
 import {Movie} from "./schemas.js";
-import Tiktok from '@tobyg74/tiktok-api-dl';
 import { getTikTokInfo } from './tiktok.js';
-import got from 'got';
 import { Readable } from 'stream';
 import FastifyMultipart from '@fastify/multipart';
 import FormData from 'form-data';
+import fs from 'fs';
+import { Result } from "@fal-ai/client";
+import { WhisperOutput } from "@fal-ai/client/endpoints";
+import path from "path";
 
 const checkVideoQuery = z.object({
   video_url: z.string(),
@@ -39,8 +40,6 @@ export async function startServer() {
     const mp4Buffer = await downloadMp4(tikTokInfo.videoUrl);
     const mp3Blob = await mp4toMp3(Readable.from(mp4Buffer));
     const transcribeResult = await transcribe(mp3Blob);
-    console.log(transcribeResult.data);
-    console.log(transcribeResult.requestId);
 
     const movie: Movie = {
       slides: [],
@@ -50,7 +49,7 @@ export async function startServer() {
     form.append('data', JSON.stringify(movie), {
       contentType: 'application/json',
     });
-    form.append('video', mp4Buffer);
+    // form.append('video', mp4Buffer);
 
     reply.header("Content-Type", `multipart/form-data; boundary=${form.getBoundary()}`);
     reply.send(form.getBuffer());
