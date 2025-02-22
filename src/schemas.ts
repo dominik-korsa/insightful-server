@@ -5,15 +5,21 @@ export const SlideAssessment = z.enum([
   'opinion',
   'verified-fact',
   'unverified-fact',
-  'rhetorical-question',
+  'false-information',
 ]);
+
+export const Link = z.object({
+  url: z.string(),
+  title: z.string(),
+});
 
 export const Slide = z.object({
   timestampBeginMs: z.number().positive(),
   durationMs: z.number().positive(),
-  transcript: z.string(),
-  comment: z.string(),
+  // transcript: z.string(),
+  comment: z.optional(z.string()),
   assessment: SlideAssessment,
+  links: z.array(Link),
 });
 
 export const Movie = z.object({
