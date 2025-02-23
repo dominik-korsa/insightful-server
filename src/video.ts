@@ -1,7 +1,7 @@
 import {fal, Result} from "@fal-ai/client";
 import ffmpeg from 'fluent-ffmpeg';
 import {Readable, Writable} from 'stream';
-import {WhisperOutput} from '@fal-ai/client/endpoints';
+import {WhisperChunk, WhisperOutput} from '@fal-ai/client/endpoints';
 import {Movie, Slide, SlideAnalysis} from './schemas.js';
 import {z} from 'zod';
 import got from "got";
@@ -56,7 +56,8 @@ export async function downloadMp4(videoUrl: string): Promise<Buffer> {
   return got.get(videoUrl).buffer();
 }
 
-async function createPrompt(input_text: string): Promise<string> {
+async function createPrompt(chunks: WhisperChunk[]): Promise<string> {
+  const input_text = chunks.map((chunk, index) => `[${index}] ${chunk.text}`).join(" ")
   const promptTemplate = await fs.promises.readFile(
     path.join(import.meta.dirname, '../assets/prompt.txt'), 'utf-8');
   return `${promptTemplate}\n"${input_text}"\nOutput JSON:`;
@@ -84,14 +85,13 @@ async function analyzeSlide(prompt: string): Promise<SlideAnalysis[]> {
 }
 
 export async function processWhisperResult(whisperResult: WhisperOutput): Promise<Movie> {
-  const input_text = whisperResult.text
-  const prompt = await createPrompt(input_text);
-  const analysis = await analyzeSlide(prompt);
-
   const chunks = whisperResult.chunks;
   if (chunks === undefined) {
     throw new Error("No word timings found");
   }
+
+  const prompt = await createPrompt(chunks);
+  const analysis = await analyzeSlide(prompt);
 
   const getTimestamp = (item: SlideAnalysis, id: number): number => {
     return Number(chunks[item.word_indexes[id]].timestamp[id]);
@@ -107,5 +107,5 @@ export async function processWhisperResult(whisperResult: WhisperOutput): Promis
     transcript: item.text_part,
   }));
 
-  return { slides: slides };
+  return {slides: slides};
 }
