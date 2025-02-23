@@ -92,13 +92,12 @@ async function analyzeSlide(prompt: string): Promise<SlideAnalysis[]> {
 }
 
 export async function processWhisperResult(whisperResult: WhisperOutput, generateVoiceover: boolean): Promise<Movie> {
-  const input_text = whisperResult.text;
-  const prompt = await createPrompt(input_text);
-  const analysis = await analyzeSlide(prompt);
   const chunks = whisperResult.chunks;
   if (chunks === undefined) {
     throw new Error("No word timings found");
   }
+  const prompt = await createPrompt(chunks);
+  const analysis = await analyzeSlide(prompt);
 
   const getTimestamp = (item: SlideAnalysis, id: number): number => {
     return Number(chunks[item.word_indexes[id]].timestamp[id]);
