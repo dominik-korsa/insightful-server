@@ -6,10 +6,18 @@ import {downloadMp4, mp4toMp3, processWhisperResult, transcribe} from "./video.j
 import {getTikTokInfo} from './tiktok.js';
 import {Readable} from 'stream';
 import FastifyMultipart from '@fastify/multipart';
-import FormData from 'form-data';
+import { Movie } from "./schemas.js";
 
 const checkVideoQuery = z.object({
   video_url: z.string(),
+});
+
+const checkVideoResponse = z.object({
+  movie: Movie,
+  video: z.object({
+    data: z.string(),
+    contentType: z.string(),
+  }),
 });
 
 export async function startServer() {
@@ -30,19 +38,18 @@ export async function startServer() {
       return {error: 'The video_url param is not an TikTok URL'};
     }
     const tikTokInfo = await getTikTokInfo(request.query.video_url);
-    const mp4Buffer = await downloadMp4(tikTokInfo.videoUrl);
-    const mp3Blob = await mp4toMp3(Readable.from(mp4Buffer));
+    const mp4 = await downloadMp4(tikTokInfo.videoUrl);
+    const mp3Blob = await mp4toMp3(Readable.from(mp4.buffer));
     const transcribeResult = await transcribe(mp3Blob);
-    const movie = await processWhisperResult(transcribeResult.data)
+    const movie = await processWhisperResult(transcribeResult.data);
 
-    const form = new FormData();
-    form.append('data', JSON.stringify(movie), {
-      contentType: 'application/json',
+    return checkVideoResponse.parse({
+      movie,
+      video: {
+        data: mp4.buffer.toString('base64'),
+        contentType: mp4.contentType,
+      },
     });
-    form.append('video', mp4Buffer);
-
-    reply.header("Content-Type", `multipart/form-data; boundary=${form.getBoundary()}`);
-    reply.send(form.getBuffer());
   });
 
   await app.listen({
