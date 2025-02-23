@@ -13,8 +13,9 @@ export function checkInstagramUrl(url: string) {
 }
 
 const tikTokRegex = /^https:\/\/(www\.)?tiktok\.com\/.+$/;
+const tikTokMobileRegex = /^https:\/\/vm\.tiktok\.com\/\w+\/?$/;
 export function checkTikTokUrl(url: string) {
-  return tikTokRegex.test(url);
+  return tikTokRegex.test(url) || tikTokMobileRegex.test(url);
 }
 
 export async function readableToBuffer(readableStream: Readable) {
