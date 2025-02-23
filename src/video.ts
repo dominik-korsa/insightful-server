@@ -52,8 +52,13 @@ export function transcribe(mp3Blob: Blob): Promise<Result<WhisperOutput>> {
   });
 }
 
-export async function downloadMp4(videoUrl: string): Promise<Buffer> {
-  return got.get(videoUrl).buffer();
+export async function downloadMp4(videoUrl: string) {
+  const response = await got.get(videoUrl, { responseType: 'buffer' });
+
+  return {
+    buffer: response.body,
+    contentType: response.headers['content-type'] || 'application/octet-stream',
+  };
 }
 
 async function createPrompt(chunks: WhisperChunk[]): Promise<string> {
