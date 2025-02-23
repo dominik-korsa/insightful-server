@@ -1,23 +1,25 @@
-You are an expert in analyzing text and categorizing it. You are given a passage extracted from a video, and your task is to extract meaningful segments from the text.
+You are an expert in analyzing text and categorizing it. You are given a passage extracted from a video, and your task is to extract meaningful segments from the text while preserving word index references.
 
-Each segment should be a clear, coherent part of the text, which can be a sentence, phrase, or clause, or even multiple sentences if they form a single logical unit.
+Each segment should be a clear, coherent part of the text, which can be a sentence, phrase, or clause, or even multiple sentences if they form a single logical unit. Do not limit segments to individual sentences. Group related sentences together when they convey a unified idea.
 
 For each segment:
-1. Provide the starting and ending word indexes within the text.
+1. Provide the starting and ending word indexes within the text. The text is indexed, so ensure your segmentation aligns with these indexes and accurately reflects the position of the extracted text.
 2. Categorize it into one of the following categories:
  opinion: A subjective statement or personal viewpoint.
  verified-fact: A statement backed by reliable sources or established facts.
  unverified-fact: A factual claim that lacks supporting evidence or sources.
  false-information: A statement that is false, with evidence proving so.
- unclassified: A part that does not belong in any of the above categories (e.g., vague statements, extraneous text).
+ misleading: A technically true statement that creates a deceptive impression.
+ satire: A statement meant to be humorous or exaggerated.
+ unclassified: A vague, ambiguous, or extraneous statement that does not fit any category.
 3. Provide a comment for the analyzed text:
  For Verified Facts, include at least one supporting source (e.g., scientific studies, reputable news outlets, official reports).
  For Unverified Facts, state that the claim lacks verification and explain why.
  For Opinions, explain that it expresses a personal belief. If relevant, provide links to context or expert perspectives. If an opinion is meant to sound like a factual statement, explain why it's not.
  For False Information, provide at least one source proving it is false.
  For Unclassified, explain briefly why it does not fit into any category.
- The comment should include additional context for the statement, not just analyze the wording or meaning of the statement.
- For statements that are not false (for example for opinions), provide the explanation only if it adds any context and value to the analysis. Otherwise output null in the "explanation" field.
+ The explanation should include additional context beyond just analyzing the wording of the statement.
+ If a statement is not false (e.g., an opinion), provide an explanation only if it adds value to the analysis. Otherwise, output null in the "explanation" field.
 4. Include relevant links to supporting sources for Verified Facts and False Information.
 5. Provide suggestions: List potential follow-up questions or related topics that the user might want to explore and for which you can provide valuable insight.
 
@@ -29,115 +31,97 @@ Return a JSON object with the following fields for each segment:
   "explanation": "Brief comment of the factuality of the text_part (max 40 words)" or null,
   "word_indexes": [start_index, end_index],
   "links": [
-    { "url": "URL", "title": "Title of source",  }
+    { "url": "URL", "title": "Title of source" }
   ],
   "suggestions": [
     "Possible follow-up question",
     "Related topic to explore"
   ]
 }
-Do not format the JSON. Start your prompt with "{" and end with "}".
+Do not format the JSON. Start your prompt with "{" and end with "}.
 
 Input Text:
-"Vaccines cause autism, and pharmaceutical companies are hiding the truth. Scientists claim vaccines are safe, but independent studies have shown harmful effects. Many governments mandate vaccines despite public concerns. However, personal freedom is important, and people should have the right to choose. The CDC states that vaccines have been proven safe through extensive studies. But isn’t it strange how some children develop issues after vaccination? Clearly, there’s something they aren’t telling us."
+"[0] Electric [1] cars [2] are [3] the [4] future. [5] They [6] produce [7] zero [8] emissions, [9] which [10] is [11] great [12] for [13] the [14] environment. [15] However, [16] making [17] their [18] batteries [19] requires [20] a [21] lot [22] of [23] mining, [24] which [25] can [26] be [27] harmful. [28] Many [29] companies [30] are [31] working [32] on [33] improving [34] battery [35] technology. [36] Tesla [37] and [38] other [39] companies [40] claim [41] they [42] have [43] already [44] made [45] huge [46] progress, [47] but [48] not [49] everyone [50] agrees. [51] Some [52] reports [53] say [54] EVs [55] aren't [56] actually [57] that [58] green, [59] while [60] others [61] argue [62] the [63] long-term [64] benefits [65] outweigh [66] the [67] negatives. [68] In [69] the [70] end, [71] we [72] need [73] more [74] research [75] to [76] know [77] for [78] sure. [79] It’s [80] important [81] to [82] stay [83] open-minded [84] about [85] emerging [86] technologies, [87] but [88] also [89] to [90] be [91] critical [92] of [93] their [94] potential [95] drawbacks."
 
 Output JSON:
 {
   "segments": [
     {
-      "text_part": "Vaccines cause autism, and pharmaceutical companies are hiding the truth.",
-      "assessment": "false-information",
-      "explanation": "There is no scientific evidence linking vaccines to autism. Large-scale studies have confirmed no causal link.",
-      "word_indexes": [0, 13],
+      "text_part": "Electric cars are the future. They produce zero emissions, which is great for the environment.",
+      "assessment": "misleading",
+      "explanation": "EVs have no tailpipe emissions, but their production and electricity use can generate pollution.",
+      "word_indexes": [0, 14],
       "links": [
         {
-          "url": "https://www.cdc.gov/vaccinesafety/concerns/autism.html",
-          "title": "CDC: Vaccines and Autism"
+          "url": "https://www.epa.gov/greenvehicles/electric-vehicle-myths",
+          "title": "EPA: Electric Vehicle Myths"
         },
         {
-          "url": "https://www.who.int/news-room/fact-sheets/detail/vaccine-safety",
-          "title": "WHO: Vaccine Safety Overview"
+          "url": "https://www.nytimes.com/2021/03/02/climate/electric-vehicles-environment.html",
+          "title": "NYT: How Green Are Electric Vehicles?"
         }
       ],
       "suggestions": [
-        "What are common vaccine side effects?",
-        "How do vaccines work at a biological level?"
+        "How much pollution is generated by EV production?",
+        "What are the environmental benefits of EVs?"
       ]
     },
     {
-      "text_part": "Scientists claim vaccines are safe, but independent studies have shown harmful effects.",
-      "assessment": "unverified-fact",
-      "explanation": "The phrase 'independent studies' lacks specific references to peer-reviewed research.",
-      "word_indexes": [14, 26],
-      "links": [],
-      "suggestions": [
-        "Are there any legitimate studies showing vaccine harm?",
-        "How are vaccines tested for safety?"
-      ]
-    },
-    {
-      "text_part": "Many governments mandate vaccines despite public concerns.",
+      "text_part": "However, making their batteries requires a lot of mining, which can be harmful. Many companies are working on improving battery technology.",
       "assessment": "verified-fact",
-      "explanation": "Many countries enforce vaccine mandates as part of public health policies.",
-      "word_indexes": [27, 32],
+      "explanation": "Lithium, cobalt, and nickel mining have environmental and ethical concerns. Companies are exploring alternatives.",
+      "word_indexes": [15, 34],
       "links": [
         {
-          "url": "https://www.cdc.gov/vaccines/imz-managers/laws/state-reqs.html",
-          "title": "CDC: State Vaccine Requirements"
+          "url": "https://www.iea.org/reports/the-role-of-critical-minerals-in-clean-energy-transitions",
+          "title": "IEA: The Role of Critical Minerals in Clean Energy Transitions"
         }
       ],
       "suggestions": [
-        "Should governments have the power to mandate vaccines?",
-        "What are the ethical concerns surrounding vaccine mandates?"
+        "What are the ethical concerns of lithium mining?",
+        "Are there sustainable alternatives to lithium-ion batteries?"
       ]
     },
     {
-      "text_part": "However, personal freedom is important, and people should have the right to choose.",
+      "text_part": "Tesla and other companies claim they have already made huge progress, but not everyone agrees. Some reports say EVs aren't actually that green, while others argue the long-term benefits outweigh the negatives.",
+      "assessment": "unverified-fact",
+      "explanation": "There is ongoing debate about EV sustainability. Some studies focus on emissions from production, while others emphasize long-term benefits.",
+      "word_indexes": [35, 66],
+      "links": [
+        {
+          "url": "https://www.carbonbrief.org/factcheck-how-electric-vehicles-help-to-tackle-climate-change/",
+          "title": "Carbon Brief: How EVs help to tackle climate change"
+        },
+        {
+          "url": "https://www.sciencedirect.com/science/article/pii/S2210670724007741",
+          "title": "Science Direct: How sustainable is electric vehicle adoption?"
+        }
+      ],
+      "suggestions": [
+        "What do lifecycle analyses say about EV emissions?",
+        "How do EVs compare to gasoline cars over their lifetime?"
+      ]
+    },
+    {
+      "text_part": "In the end, we need more research to know for sure.",
+      "assessment": "unclassified",
+      "explanation": null,
+      "word_indexes": [67, 71],
+      "links": [],
+      "suggestions": [
+        "What aspects of EV sustainability need more research?",
+        "What breakthroughs in EV technology are expected in the next decade?"
+      ]
+    },
+    {
+      "text_part": "It’s important to stay open-minded about emerging technologies, but also to be critical of their potential drawbacks.",
       "assessment": "opinion",
       "explanation": null,
-      "word_indexes": [33, 41],
+      "word_indexes": [72, 95],
       "links": [],
       "suggestions": [
-        "What are arguments for and against vaccine mandates?",
-        "How do different countries approach vaccine regulations?"
-      ]
-    },
-    {
-      "text_part": "The CDC states that vaccines have been proven safe through extensive studies.",
-      "assessment": "verified-fact",
-      "explanation": "Numerous studies confirm vaccine safety based on decades of research.",
-      "word_indexes": [42, 50],
-      "links": [
-        {
-          "url": "https://www.cdc.gov/vaccinesafety/index.html",
-          "title": "CDC: Vaccine Safety Studies"
-        }
-      ],
-      "suggestions": [
-        "What studies support vaccine safety?",
-        "What are the most common vaccine myths?"
-      ]
-    },
-    {
-      "text_part": "But isn’t it strange how some children develop issues after vaccination?",
-      "assessment": "unverified-fact",
-      "explanation": "This suggests a connection without evidence. While adverse reactions exist, there is no proven link to long-term health issues.",
-      "word_indexes": [51, 59],
-      "links": [],
-      "suggestions": [
-        "What are the risks of vaccines?",
-        "What is the difference between correlation and causation?"
-      ]
-    },
-    {
-      "text_part": "Clearly, there’s something they aren’t telling us.",
-      "assessment": "unclassified",
-      "explanation": "This is a vague statement without a specific factual claim.",
-      "word_indexes": [60, 64],
-      "links": [],
-      "suggestions": [
-        "How do conspiracy theories spread?",
-        "What makes a claim verifiable?"
+        "What are the risks of blindly accepting new technologies?",
+        "How should we approach innovation and its potential downsides?"
       ]
     }
   ]
