@@ -7,6 +7,8 @@ import {z} from 'zod';
 import got from "got";
 import path from "path";
 import * as fs from "node:fs";
+import { ElevenLabsClient } from "elevenlabs";
+import { readableToBuffer } from "./utils.js";
 
 export async function mp4toMp3(input: string | Readable): Promise<Blob> {
   const chunks: Buffer[] = [];
@@ -88,7 +90,7 @@ async function analyzeSlide(prompt: string): Promise<SlideAnalysis[]> {
   return TranscriptAnalysisResponse.parse(JSON.parse(result.data.output)).segments;
 }
 
-export async function processWhisperResult(whisperResult: WhisperOutput): Promise<Movie> {
+export async function processWhisperResult(whisperResult: WhisperOutput, generateVoiceover: boolean): Promise<Movie> {
   const input_text = whisperResult.text
   const prompt = await createPrompt(input_text);
   const analysis = await analyzeSlide(prompt);
@@ -102,7 +104,7 @@ export async function processWhisperResult(whisperResult: WhisperOutput): Promis
     return Number(chunks[item.word_indexes[id]].timestamp[id]);
   }
 
-  const slides: Slide[] = analysis.map(item => ({
+  const slides: Slide[] = await Promise.all(analysis.map(async (item) => ({
     timestampBeginS: getTimestamp(item, 0),
     durationS: getTimestamp(item, 1) - getTimestamp(item, 0),
     assessment: item.assessment,
@@ -110,7 +112,17 @@ export async function processWhisperResult(whisperResult: WhisperOutput): Promis
     links: item.links,
     suggestions: item.suggestions,
     transcript: item.text_part,
-  }));
+    voiceoverMp3: generateVoiceover && item.explanation !== null ? (await createTranscript(item.explanation)).toString('base64') : null,
+  })));
 
   return { slides: slides };
+}
+
+export async function createTranscript(text: string): Promise<Buffer> {
+  const client = new ElevenLabsClient();
+  const readable = await client.textToSpeech.convertAsStream("9BWtsMINqrJLrRacOk9x", {
+    text,
+    model_id: 'eleven_flash_v2_5',
+  });
+  return readableToBuffer(readable);
 }

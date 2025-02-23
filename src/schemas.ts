@@ -33,6 +33,7 @@ export const Slide = z.object({
   links: z.array(Link),
   suggestions: z.array(z.string()),
   transcript: z.string(),
+  voiceoverMp3: z.string().nullable(),
 });
 export type Slide = z.infer<typeof Slide>;
 

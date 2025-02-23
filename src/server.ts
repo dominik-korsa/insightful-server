@@ -10,6 +10,7 @@ import { Movie } from "./schemas.js";
 
 const checkVideoQuery = z.object({
   video_url: z.string(),
+  voiceover: z.enum(['true', 'false']).optional(),
 });
 
 const checkVideoResponse = z.object({
@@ -41,7 +42,7 @@ export async function startServer() {
     const mp4 = await downloadMp4(tikTokInfo.videoUrl);
     const mp3Blob = await mp4toMp3(Readable.from(mp4.buffer));
     const transcribeResult = await transcribe(mp3Blob);
-    const movie = await processWhisperResult(transcribeResult.data);
+    const movie = await processWhisperResult(transcribeResult.data, request.query.voiceover === 'true');
 
     return checkVideoResponse.parse({
       movie,

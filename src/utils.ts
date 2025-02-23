@@ -1,3 +1,5 @@
+import { Readable } from "node:stream";
+
 export function requireEnv(name: string) {
   if (process.env[name] === undefined) {
     throw new Error(`Missing environment variable: ${name}`);
@@ -13,4 +15,12 @@ export function checkInstagramUrl(url: string) {
 const tikTokRegex = /^https:\/\/(www\.)?tiktok\.com\/.+$/;
 export function checkTikTokUrl(url: string) {
   return tikTokRegex.test(url);
+}
+
+export async function readableToBuffer(readableStream: Readable) {
+  const chunks = [];
+  for await (const chunk of readableStream) {
+    chunks.push(chunk);
+  }
+  return Buffer.concat(chunks);
 }

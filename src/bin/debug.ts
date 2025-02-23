@@ -8,7 +8,7 @@ import { WhisperOutput } from '@fal-ai/client/endpoints';
 async function main() {
   const transcript = JSON.parse(await fs.promises.readFile(path.join(import.meta.dirname, '../../local/transcript.json'), 'utf-8')) as WhisperOutput;
 
-  await processWhisperResult(transcript)
+  await processWhisperResult(transcript, false)
 }
 
 main().catch((error) => {
