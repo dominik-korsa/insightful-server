@@ -10,21 +10,23 @@ For each segment:
  unverified-fact: A factual claim that lacks supporting evidence or sources.
  false-information: A statement that is false, with evidence proving so.
  unclassified: A part that does not belong in any of the above categories (e.g., vague statements, extraneous text).
-3. Provide a clear explanation for each categorization:
+3. Provide a comment for the analyzed text:
  For Verified Facts, include at least one supporting source (e.g., scientific studies, reputable news outlets, official reports).
  For Unverified Facts, state that the claim lacks verification and explain why.
- For Opinions, explain that it expresses a personal belief. If relevant, provide links to context or expert perspectives.
+ For Opinions, explain that it expresses a personal belief. If relevant, provide links to context or expert perspectives. If an opinion is meant to sound like a factual statement, explain why it's not.
  For False Information, provide at least one source proving it is false.
  For Unclassified, explain briefly why it does not fit into any category.
+ The comment should include additional context for the statement, not just analyze the wording or meaning of the statement.
+ For statements that are not false (for example for opinions), provide the explanation only if it adds any context and value to the analysis. Otherwise output null in the "explanation" field.
 4. Include relevant links to supporting sources for Verified Facts and False Information.
-5. Provide suggestions: List potential follow-up questions or related topics that the user might want to explore.
+5. Provide suggestions: List potential follow-up questions or related topics that the user might want to explore and for which you can provide valuable insight.
 
 Output Format:
 Return a JSON object with the following fields for each segment:
 {
   "text_part": "Extracted segment of text",
   "assessment": "One of the defined categories",
-  "explanation": "Brief explanation of the categorization (max 40 words)",
+  "explanation": "Brief comment of the factuality of the text_part (max 40 words)" or null,
   "word_indexes": [start_index, end_index],
   "links": [
     { "url": "URL", "title": "Title of source",  }
@@ -92,7 +94,7 @@ Output JSON:
     {
       "text_part": "However, personal freedom is important, and people should have the right to choose.",
       "assessment": "opinion",
-      "explanation": "This expresses a personal belief about individual rights.",
+      "explanation": null,
       "word_indexes": [33, 41],
       "links": [],
       "suggestions": [

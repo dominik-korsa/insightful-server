@@ -18,7 +18,7 @@ export const Link = z.object({
 export const SlideAnalysis = z.object({
   text_part: z.string(),
   assessment: SlideAssessment,
-  explanation: z.string(),
+  explanation: z.string().nullable(),
   word_indexes: z.tuple([z.number(), z.number()]),
   links: z.array(Link),
   suggestions: z.array(z.string()),
@@ -29,7 +29,7 @@ export const Slide = z.object({
   timestampBeginS: z.number().nonnegative(),
   durationS: z.number().positive(),
   assessment: SlideAssessment,
-  explanation: z.string(),
+  explanation: z.string().nullable(),
   links: z.array(Link),
   suggestions: z.array(z.string()),
   transcript: z.string(),
